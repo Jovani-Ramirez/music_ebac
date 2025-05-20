@@ -1,19 +1,36 @@
-import React, { Component } from 'react';
+// App.js
+import React, { useState, useEffect } from 'react';
 import Header from './components/Header';
-import Song from './components/Song';
+import SearchResults from './components/SearchResults';
+import Library from './components/Library';
 import './App.css';
 
-class App extends Component {
-  state = {
-    songs: [],
+const App = () => {
+  const [searchResults, setSearchResults] = useState([]);
+  const [library, setLibrary] = useState([]);
+  const [query, setQuery] = useState('');
+
+  useEffect(() => {
+    console.log('La aplicación se ha cargado correctamente.');
+  }, []);
+
+  useEffect(() => {
+    console.log('La biblioteca se ha actualizado:', library);
+  }, [library]);
+
+  const handleAddToLibrary = (song) => {
+    if (!library.some((item) => item.id === song.id)) {
+      setLibrary([...library, song]);
+    }
   };
 
-  componentDidMount() {
-    console.log('La aplicación se ha cargado correctamente.');
-    fetch('https://discoveryprovider.audius.co/v1/tracks/trending?app_name=MUSICA_EBAC')
+  const handleSearch = () => {
+    if (!query) return;
+    fetch(`https://discoveryprovider.audius.co/v1/tracks/search?query=${encodeURIComponent(query)}&app_name=MUSICA_EBAC`)
       .then(response => response.json())
       .then(data => {
-        const songs = data.data.map(track => ({
+        const results = data.data.map(track => ({
+          id: track.id,
           title: track.title,
           artist: track.user.name,
           album: track.genre || 'Desconocido',
@@ -21,28 +38,28 @@ class App extends Component {
             ? track.artwork['1000x1000']
             : 'https://via.placeholder.com/100?text=Sin+Portada',
         }));
-        this.setState({ songs });
+        setSearchResults(results);
       })
-      .catch(error => console.error('Error al obtener las canciones:', error));
-  }
-  render() {
-    return (
-      <div className="app">
-        <Header />
-        <div className="song-list">
-          {this.state.songs.map((song, index) => (
-            <Song
-              key={index}
-              title={song.title}
-              artist={song.artist}
-              album={song.album}
-              cover={song.cover}
-            />
-          ))}
-        </div>
+      .catch(error => console.error('Error al buscar canciones:', error));
+  };
+
+  return (
+    <div className="app">
+      <Header />
+      <div style={{ padding: '20px', textAlign: 'center' }}>
+        <input
+          type="text"
+          placeholder="Buscar canciones..."
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          style={{ padding: '8px', width: '60%', maxWidth: '400px' }}
+        />
+        <button onClick={handleSearch} style={{ padding: '8px 16px', marginLeft: '10px' }}>Buscar</button>
       </div>
-    );
-  }
-}
+      <SearchResults songs={searchResults} onAdd={handleAddToLibrary} />
+      <Library songs={library} />
+    </div>
+  );
+};
 
 export default App;

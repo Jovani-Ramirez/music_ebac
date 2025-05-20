@@ -1,14 +1,11 @@
-import React, { Component } from 'react';
+// components/Header.js
+import React from 'react';
 
-class Header extends Component {
-  render() {
-    return (
-      <header style={styles.header}>
-        <h1 style={styles.title}>Mi App de Música</h1>
-      </header>
-    );
-  }
-}
+const Header = () => (
+  <header style={styles.header}>
+    <h1 style={styles.title}>Mi App de Música</h1>
+  </header>
+);
 
 const styles = {
   header: {
