@@ -1,0 +1,15 @@
+.library {
+    padding: 20px;
+  }
+  .songs-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+  }
+  .songs-row > a {
+    text-decoration: none;
+    color: inherit;
+    max-width: 300px;
+    flex: 1 1 300px;
+  }
