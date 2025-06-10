@@ -1,22 +1,11 @@
-// components/Header.js
+// src/components/Header/index.js
 import React from 'react';
+import { HeaderContainer, Title } from './Header.styles';
 
 const Header = () => (
-  <header style={styles.header}>
-    <h1 style={styles.title}>Mi App de Música</h1>
-  </header>
+  <HeaderContainer>
+    <Title>Mi App de Música</Title>
+  </HeaderContainer>
 );
-
-const styles = {
-  header: {
-    backgroundColor: '#000',
-    padding: '20px',
-    textAlign: 'center',
-  },
-  title: {
-    color: '#fff',
-    margin: 0,
-  },
-};
 
 export default Header;

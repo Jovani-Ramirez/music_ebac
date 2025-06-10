@@ -1,12 +1,23 @@
-// App.js
+// src/App.js
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { ThemeProvider } from 'styled-components';
+
 import Header from './components/Header';
 import SearchResults from './components/SearchResults';
 import Library from './components/Library';
 import SongDetail from './components/SongDetail';
 import SearchBar from './components/SearchBar';
-import './App.css';
+
+import GlobalStyle from './styles/GlobalStyles';
+import { theme } from './styles/theme';
+
+import {
+  AppContainer,
+  CenteredMessage,
+  ErrorBox,
+  RetryButton,
+} from './App.styles';
 
 const App = () => {
   const [query, setQuery] = useState('');
@@ -20,37 +31,40 @@ const App = () => {
       setLibrary([...library, song]);
     }
   };
+
   const handleSearch = (searchTerm) => {
     if (!searchTerm) return;
     setLoading(true);
     setError(null);
     setSearchResults([]);
     setQuery(searchTerm);
-  
+
     const apiUrl = `https://theaudiodb.com/api/v1/json/2/searchalbum.php?s=${encodeURIComponent(searchTerm)}`;
     const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(apiUrl)}`;
-  
+
     fetch(proxyUrl)
-      .then(response => {
+      .then((response) => {
         if (!response.ok) throw new Error('Error en la respuesta');
         return response.json();
       })
-      .then(data => {
+      .then((data) => {
         setLoading(false);
         if (!data.album) {
           setSearchResults([]);
           setError('No se encontraron álbumes para ese artista.');
           return;
         }
-  
-        const results = data.album.map(album => ({
+
+        const results = data.album.map((album) => ({
           id: album.idAlbum,
           title: album.strAlbum,
           artist: album.strArtist,
           album: album.strAlbum,
-          cover: album.strAlbumThumb || 'https://via.placeholder.com/100?text=Sin+Portada',
+          cover:
+            album.strAlbumThumb ||
+            'https://via.placeholder.com/100?text=Sin+Portada',
         }));
-  
+
         setSearchResults(results);
       })
       .catch(() => {
@@ -58,38 +72,45 @@ const App = () => {
         setError('Hubo un problema al cargar los datos. Intenta nuevamente.');
       });
   };
-  
 
   return (
-    <Router>
-      <div className="app">
-        <Header />
-        <Routes>
-          <Route
-            path="/"
-            element={(
-              <>
-                <SearchBar onSearch={handleSearch} />
-                {loading && <p style={{ textAlign: 'center' }}>Cargando...</p>}
-                {error && (
-                  <div style={{ textAlign: 'center' }}>
-                    <p>{error}</p>
-                    <button onClick={() => handleSearch(query)}>Reintentar</button>
-                  </div>
-                )}
-                {!loading && !error && (
-                  <>
-                    <SearchResults songs={searchResults} onAdd={handleAddToLibrary} />
-                    <Library songs={library} />
-                  </>
-                )}
-              </>
-            )}
-          />
-          <Route path="/song/:id" element={<SongDetail />} />
-        </Routes>
-      </div>
-    </Router>
+    <ThemeProvider theme={theme}>
+      <GlobalStyle />
+      <Router>
+        <AppContainer>
+          <Header />
+          <Routes>
+            <Route
+              path="/"
+              element={
+                <>
+                  <SearchBar onSearch={handleSearch} />
+                  {loading && <CenteredMessage>Cargando...</CenteredMessage>}
+                  {error && (
+                    <ErrorBox>
+                      <p>{error}</p>
+                      <RetryButton onClick={() => handleSearch(query)}>
+                        Reintentar
+                      </RetryButton>
+                    </ErrorBox>
+                  )}
+                  {!loading && !error && (
+                    <>
+                      <SearchResults
+                        songs={searchResults}
+                        onAdd={handleAddToLibrary}
+                      />
+                      <Library songs={library} />
+                    </>
+                  )}
+                </>
+              }
+            />
+            <Route path="/song/:id" element={<SongDetail />} />
+          </Routes>
+        </AppContainer>
+      </Router>
+    </ThemeProvider>
   );
 };
 

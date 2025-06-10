@@ -1,6 +1,16 @@
+// src/components/SongDetail/index.js
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import './SongDetail.css';
+import {
+  Container,
+  Title,
+  Artist,
+  Year,
+  AlbumThumb,
+  Description,
+  LoadingText,
+  ErrorText
+} from './SongDetail.styles';
 
 const SongDetail = () => {
   const { id } = useParams();
@@ -30,23 +40,22 @@ const SongDetail = () => {
     fetchAlbum();
   }, [id]);
 
-  if (loading) return <p className="loading-text">Cargando detalles...</p>;
-  if (error || !album) return <p className="error-text">No se pudo cargar el álbum.</p>;
+  if (loading) return <LoadingText>Cargando detalles...</LoadingText>;
+  if (error || !album) return <ErrorText>No se pudo cargar el álbum.</ErrorText>;
 
   return (
-    <div className="song-detail-container">
-      <h2 className="album-title">{album.strAlbum}</h2>
-      <p className="artist-name">{album.strArtist}</p>
-      <p className="release-year">Año: {album.intYearReleased}</p>
+    <Container>
+      <Title>{album.strAlbum}</Title>
+      <Artist>{album.strArtist}</Artist>
+      <Year>Año: {album.intYearReleased}</Year>
       {album.strAlbumThumb && (
-        <img
+        <AlbumThumb
           src={album.strAlbumThumb}
           alt={album.strAlbum}
-          className="album-thumb"
         />
       )}
-      <p className="album-description">{album.strDescriptionEN || 'No hay descripción disponible.'}</p>
-    </div>
+      <Description>{album.strDescriptionEN || 'No hay descripción disponible.'}</Description>
+    </Container>
   );
 };
 

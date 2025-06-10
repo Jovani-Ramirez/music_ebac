@@ -1,22 +1,21 @@
+// src/components/Library/index.js
 import React from 'react';
 import Song from './Song';
-import './Library.css';
+import { Container, Title, Message, SongsRow } from './Library.styles';
 
 const Library = ({ songs }) => (
-  <>
-    <div className="library">
-      <h2>Mi Biblioteca</h2>
-      {songs.length === 0 ? (
-        <p>No has agregado canciones aún.</p>
-      ) : (
-        <div className="songs-row">
-          {songs.map((song) => (
-              <Song {...song} />
-          ))}
-        </div>
-      )}
-    </div>
-  </>
+  <Container>
+    <Title>Mi Biblioteca</Title>
+    {songs.length === 0 ? (
+      <Message>No has agregado canciones aún.</Message>
+    ) : (
+      <SongsRow>
+        {songs.map((song) => (
+          <Song key={song.id} {...song} />
+        ))}
+      </SongsRow>
+    )}
+  </Container>
 );
 
 export default Library;

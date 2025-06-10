@@ -1,6 +1,15 @@
+// src/components/Song/index.js
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import './Song.css';
+import {
+  Card,
+  Cover,
+  Info,
+  Title,
+  Artist,
+  Album,
+  AddButton
+} from './Song.styles';
 
 const Song = ({ id, title = '', artist, album, cover, onAdd }) => {
   const navigate = useNavigate();
@@ -11,27 +20,24 @@ const Song = ({ id, title = '', artist, album, cover, onAdd }) => {
   };
 
   return (
-    <>
-      <div className="song-card" onClick={handleClick}>
-        <img src={cover} alt={`Portada de ${title}`} className="song-cover" />
-        <div className="song-info">
-          <h2 title={title}>{truncatedTitle}</h2>
-          <p>{artist}</p>
-          <p>{album}</p>
-          {onAdd && (
-            <button
-              className="add-button"
-              onClick={(e) => {
-                e.stopPropagation();
-                onAdd();
-              }}
-            >
-              Agregar a mi biblioteca
-            </button>
-          )}
-        </div>
-      </div>
-    </>
+    <Card onClick={handleClick}>
+      <Cover src={cover} alt={`Portada de ${title}`} />
+      <Info>
+        <Title title={title}>{truncatedTitle}</Title>
+        <Artist>{artist}</Artist>
+        <Album>{album}</Album>
+        {onAdd && (
+          <AddButton
+            onClick={(e) => {
+              e.stopPropagation();
+              onAdd();
+            }}
+          >
+            Agregar a mi biblioteca
+          </AddButton>
+        )}
+      </Info>
+    </Card>
   );
 };
 
