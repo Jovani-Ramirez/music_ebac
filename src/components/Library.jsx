@@ -1,21 +1,24 @@
-// src/components/Library/index.js
 import React from 'react';
-import Song from './Song';
-import { Container, Title, Message, SongsRow } from './Library.styles';
+import { useDispatch, useSelector } from 'react-redux';
+import { removeSong, selectAlbum } from '../redux/librarySlice';
 
-const Library = ({ songs }) => (
-  <Container>
-    <Title>Mi Biblioteca</Title>
-    {songs.length === 0 ? (
-      <Message>No has agregado canciones aún.</Message>
-    ) : (
-      <SongsRow>
-        {songs.map((song) => (
-          <Song key={song.id} {...song} />
-        ))}
-      </SongsRow>
-    )}
-  </Container>
-);
+const Library = () => {
+  const albums = useSelector(state => state.libraryState.albums);
+  const dispatch = useDispatch();
+
+  return (
+    <div className="album-grid">
+    {albums.map(album => (
+      <div className="album-card" key={album.idAlbum}>
+        <img src={album.strAlbumThumb} alt={album.strAlbum} />
+        <p><strong>{album.strAlbum}</strong></p>
+        <p>{album.strArtist}</p>
+        <button onClick={() => dispatch(removeSong(album.idAlbum))}>Eliminar</button>
+        <button onClick={() => dispatch(selectAlbum(album))}>Ver detalles</button>
+      </div>
+    ))}
+  </div>
+  );
+};
 
 export default Library;
